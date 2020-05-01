@@ -81,7 +81,7 @@
         "completeOtherBranchesThenFail": false,
         "continuePipeline": false,
         "failPipeline": false,
-        "name": "Canary Install",
+        "name": "Blue Green Install",
         "preconditions": [
           {
             "cloudProvider": "kubernetes",
@@ -124,8 +124,8 @@
       {
         "application": "sampleapp",
         "failPipeline": true,
-        "name": "Canary Deploy",
-        "pipeline": "CANARY_DEPLOY_PIPELINE_ID",
+        "name": "Blue Green Deploy",
+        "pipeline": "BLUE_GREEN_DEPLOY_PIPELINE_ID",
         "pipelineParameters": {
           "successRate": "${parameters.successRate}"
         },

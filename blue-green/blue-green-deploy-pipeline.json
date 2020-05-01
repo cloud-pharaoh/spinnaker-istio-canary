@@ -1,0 +1,430 @@
+{
+    "name": "Blue/Green Deploy Pipeline",
+    "application": "sampleapp",
+    "appConfig": {},
+    "description": "This pipeline deploys a green version of the application then shifts traffic from current prod to this version. Based on manual judgement, it either triggers the production deployment pipeline or blue/green failed",
+    "executionEngine": "v2",
+    "keepWaitingPipelines": false,
+    "lastModifiedBy": "anonymous",
+    "limitConcurrent": true,
+    "parallel": true,
+    "parameterConfig": [
+      {
+        "description": "Success rate of the application",
+        "hasOptions": true,
+        "label": "Success Rate",
+        "name": "successRate",
+        "options": [
+          {
+            "value": "0"
+          },
+          {
+            "value": "10"
+          },
+          {
+            "value": "20"
+          },
+          {
+            "value": "30"
+          },
+          {
+            "value": "40"
+          },
+          {
+            "value": "50"
+          },
+          {
+            "value": "60"
+          },
+          {
+            "value": "70"
+          },
+          {
+            "value": "80"
+          },
+          {
+            "value": "90"
+          },
+          {
+            "value": "100"
+          }
+        ],
+        "required": true
+      }
+    ],
+    "stages": [
+      {
+        "account": "gke-1-acct",
+        "cloudProvider": "kubernetes",
+        "expectedArtifacts": [],
+        "manifestArtifactAccount": "embedded-artifact",
+        "manifests": [
+          {
+            "apiVersion": "apps/v1",
+            "kind": "Deployment",
+            "metadata": {
+              "labels": {
+                "app": "sampleapp-green",
+                "version": "green"
+              },
+              "name": "sampleapp-green",
+              "namespace": "sampleapp"
+            },
+            "spec": {
+              "replicas": 1,
+              "selector": {
+                "matchLabels": {
+                  "app": "sampleapp",
+                  "version": "green"
+                }
+              },
+              "template": {
+                "metadata": {
+                  "labels": {
+                    "app": "sampleapp",
+                    "version": "green"
+                  }
+                },
+                "spec": {
+                  "containers": [
+                    {
+                      "env": [
+                        {
+                          "name": "SUCCESS_RATE",
+                          "valueFrom": {
+                            "configMapKeyRef": {
+                              "key": "SUCCESS_RATE",
+                              "name": "sampleapp-config-green"
+                            }
+                          }
+                        }
+                      ],
+                      "image": "gcr.io/spinnaker-marketplace/sampleapp:latest",
+                      "name": "sampleapp",
+                      "ports": [
+                        {
+                          "containerPort": 8000
+                        },
+                        {
+                          "containerPort": 8080
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "moniker": {
+          "app": "sampleapp"
+        },
+        "name": "Deploy Green",
+        "refId": "3",
+        "relationships": {
+          "loadBalancers": [],
+          "securityGroups": []
+        },
+        "requiredArtifactIds": [
+          "2d1febb3-6b7a-42d4-bcf1-85199c3b1aad"
+        ],
+        "requisiteStageRefIds": [
+          "10"
+        ],
+        "source": "text",
+        "trafficManagement": {
+          "enabled": false,
+          "options": {
+            "enableTraffic": false,
+            "services": []
+          }
+        },
+        "type": "deployManifest"
+      },
+      {
+        "application": "sampleapp",
+        "comments": "",
+        "failPipeline": true,
+        "name": "Upgrade Production",
+        "pipeline": "PROD_DEPLOY_PIPELINE_ID",
+        "pipelineParameters": {
+          "successRate": "${ parameters.successRate }"
+        },
+        "refId": "9",
+        "requisiteStageRefIds": [
+          "38"
+        ],
+        "stageEnabled": {
+          "expression": "${ #stage('Confirm new Prod?')['status'].toString() == 'SUCCEEDED'}",
+          "type": "expression"
+        },
+        "type": "pipeline",
+        "waitForCompletion": true
+      },
+      {
+        "account": "gke-1-acct",
+        "cloudProvider": "kubernetes",
+        "expectedArtifacts": [
+          {
+            "defaultArtifact": {
+              "kind": "custom"
+            },
+            "id": "2d1febb3-6b7a-42d4-bcf1-85199c3b1aad",
+            "matchArtifact": {
+              "kind": "custom",
+              "name": "sampleapp-config-green",
+              "type": "kubernetes/configMap"
+            },
+            "useDefaultArtifact": false,
+            "usePriorExecution": false
+          }
+        ],
+        "manifestArtifactAccount": "embedded-artifact",
+        "manifests": [
+          {
+            "apiVersion": "v1",
+            "data": {
+              "SUCCESS_RATE": "${ parameters.successRate }"
+            },
+            "kind": "ConfigMap",
+            "metadata": {
+              "labels": {
+                "app": "sampleapp-green"
+              },
+              "name": "sampleapp-config-green",
+              "namespace": "sampleapp"
+            }
+          }
+        ],
+        "moniker": {
+          "app": "sampleapp"
+        },
+        "name": "Deploy Green Config",
+        "refId": "10",
+        "relationships": {
+          "loadBalancers": [],
+          "securityGroups": []
+        },
+        "requisiteStageRefIds": [],
+        "source": "text",
+        "trafficManagement": {
+          "enabled": false,
+          "options": {
+            "enableTraffic": false,
+            "services": []
+          }
+        },
+        "type": "deployManifest"
+      },
+      {
+        "account": "gke-1-acct",
+        "app": "sampleapp",
+        "cloudProvider": "kubernetes",
+        "kinds": [
+          "deployment"
+        ],
+        "labelSelectors": {
+          "selectors": [
+            {
+              "key": "app",
+              "kind": "EQUALS",
+              "values": [
+                "sampleapp-green"
+              ]
+            }
+          ]
+        },
+        "location": "sampleapp",
+        "mode": "label",
+        "name": "Delete Green",
+        "options": {
+          "cascading": true
+        },
+        "refId": "12",
+        "requisiteStageRefIds": [
+          "24"
+        ],
+        "type": "deleteManifest"
+      },
+      {
+        "account": "gke-1-acct",
+        "cloudProvider": "kubernetes",
+        "manifestArtifactAccount": "docker-registry",
+        "manifests": [
+          {
+            "apiVersion": "networking.istio.io/v1alpha3",
+            "kind": "VirtualService",
+            "metadata": {
+              "name": "sampleapp-virtual-service",
+              "namespace": "sampleapp"
+            },
+            "spec": {
+              "hosts": [
+                "sampleapp"
+              ],
+              "http": [
+                {
+                  "route": [
+                    {
+                      "destination": {
+                        "host": "sampleapp",
+                        "subset": "prod"
+                      },
+                      "weight": 0
+                    },
+                    {
+                      "destination": {
+                        "host": "sampleapp",
+                        "subset": "green"
+                      },
+                      "weight": 100
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "moniker": {
+          "app": "sampleapp"
+        },
+        "name": "Shift 100% traffic to Green",
+        "refId": "17",
+        "relationships": {
+          "loadBalancers": [],
+          "securityGroups": []
+        },
+        "requisiteStageRefIds": [
+          "3",
+          "10",
+          "37"
+        ],
+        "skipExpressionEvaluation": false,
+        "source": "text",
+        "trafficManagement": {
+          "enabled": false,
+          "options": {
+            "enableTraffic": false,
+            "services": []
+          }
+        },
+        "type": "deployManifest"
+      },
+      {
+        "application": "sampleapp",
+        "failPipeline": true,
+        "name": "100% to old Prod",
+        "pipeline": "BLUE_GREEN_FAILED_PIPELINE_ID",
+        "pipelineParameters": {},
+        "refId": "32",
+        "requisiteStageRefIds": [
+          "38"
+        ],
+        "stageEnabled": {
+          "expression": "${ #stage('Confirm new Prod?')['status'].toString() == 'FAILED'}",
+          "type": "expression"
+        },
+        "type": "pipeline",
+        "waitForCompletion": true
+      },
+      {
+        "account": "gke-1-acct",
+        "cloudProvider": "kubernetes",
+        "manifestArtifactAccount": "docker-registry",
+        "manifests": [
+          {
+            "apiVersion": "networking.istio.io/v1alpha3",
+            "kind": "VirtualService",
+            "metadata": {
+              "name": "sampleapp-virtual-service",
+              "namespace": "sampleapp"
+            },
+            "spec": {
+              "hosts": [
+                "sampleapp"
+              ],
+              "http": [
+                {
+                  "route": [
+                    {
+                      "destination": {
+                        "host": "sampleapp",
+                        "subset": "prod"
+                      },
+                      "weight": 100
+                    },
+                    {
+                      "destination": {
+                        "host": "sampleapp",
+                        "subset": "green"
+                      },
+                      "weight": 0
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "apiVersion": "networking.istio.io/v1alpha3",
+            "kind": "DestinationRule",
+            "metadata": {
+              "name": "sampleapp-destination-rule",
+              "namespace": "sampleapp"
+            },
+            "spec": {
+              "host": "sampleapp",
+              "subsets": [
+                {
+                  "labels": {
+                    "version": "prod"
+                  },
+                  "name": "prod"
+                },
+                {
+                  "labels": {
+                    "version": "green"
+                  },
+                  "name": "green"
+                }
+              ]
+            }
+          }
+        ],
+        "moniker": {
+          "app": "sampleapp"
+        },
+        "name": "Deploy VirtualService",
+        "refId": "37",
+        "relationships": {
+          "loadBalancers": [],
+          "securityGroups": []
+        },
+        "requisiteStageRefIds": [],
+        "skipExpressionEvaluation": false,
+        "source": "text",
+        "trafficManagement": {
+          "enabled": false,
+          "options": {
+            "enableTraffic": false,
+            "services": []
+          }
+        },
+        "type": "deployManifest"
+      },
+      {
+        "failPipeline": true,
+        "instructions": "Continue to new production?",
+        "judgmentInputs": [],
+        "name": "Confirm new Prod?",
+        "notifications": [],
+        "refId": "38",
+        "requisiteStageRefIds": [
+          "17"
+        ],
+        "type": "manualJudgment"
+      }
+    ],
+    "triggers": [],
+    "updateTs": "1567912242394"
+  }
