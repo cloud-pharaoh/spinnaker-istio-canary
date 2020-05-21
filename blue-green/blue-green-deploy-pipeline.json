@@ -151,7 +151,7 @@
         "pipelineParameters": {
           "successRate": "${ parameters.successRate }"
         },
-        "refId": "9",
+        "refId": "97",
         "requisiteStageRefIds": [
           "38"
         ],
@@ -444,7 +444,7 @@
           "securityGroups": []
         },
         "requisiteStageRefIds": [
-          "9"
+          "97"
         ],
         "skipExpressionEvaluation": false,
         "source": "text",
