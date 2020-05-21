@@ -1,5 +1,5 @@
 {
-    "name": "Blue/Green Trigger Deploy Pipeline",
+    "name": "Blue Green Trigger Deploy Pipeline",
     "application": "sampleapp",
     "keepWaitingPipelines": false,
     "lastModifiedBy": "anonymous",

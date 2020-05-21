@@ -129,7 +129,8 @@
           "2d1febb3-6b7a-42d4-bcf1-85199c3b1aad"
         ],
         "requisiteStageRefIds": [
-          "10"
+          "10",
+          "37"
         ],
         "source": "text",
         "trafficManagement": {
@@ -155,7 +156,7 @@
           "38"
         ],
         "stageEnabled": {
-          "expression": "${ #stage('Confirm new Prod?')['status'].toString() == 'SUCCEEDED'}",
+          "expression": "${ #judgment('Confirm new Prod?').equals('Continue')}",
           "type": "expression"
         },
         "type": "pipeline",
@@ -215,36 +216,6 @@
           }
         },
         "type": "deployManifest"
-      },
-      {
-        "account": "gke-1-acct",
-        "app": "sampleapp",
-        "cloudProvider": "kubernetes",
-        "kinds": [
-          "deployment"
-        ],
-        "labelSelectors": {
-          "selectors": [
-            {
-              "key": "app",
-              "kind": "EQUALS",
-              "values": [
-                "sampleapp-green"
-              ]
-            }
-          ]
-        },
-        "location": "sampleapp",
-        "mode": "label",
-        "name": "Delete Green",
-        "options": {
-          "cascading": true
-        },
-        "refId": "12",
-        "requisiteStageRefIds": [
-          "24"
-        ],
-        "type": "deleteManifest"
       },
       {
         "account": "gke-1-acct",
@@ -321,7 +292,7 @@
           "38"
         ],
         "stageEnabled": {
-          "expression": "${ #stage('Confirm new Prod?')['status'].toString() == 'FAILED'}",
+          "expression": "${ #judgment('Confirm new Prod?').equals('Stop')}",
           "type": "expression"
         },
         "type": "pipeline",
@@ -423,6 +394,98 @@
           "17"
         ],
         "type": "manualJudgment"
+      },
+      {
+        "account": "gke-1-acct",
+        "cloudProvider": "kubernetes",
+        "manifestArtifactAccount": "docker-registry",
+        "manifests": [
+          {
+            "apiVersion": "networking.istio.io/v1alpha3",
+            "kind": "VirtualService",
+            "metadata": {
+              "name": "sampleapp-virtual-service",
+              "namespace": "sampleapp"
+            },
+            "spec": {
+              "hosts": [
+                "sampleapp"
+              ],
+              "http": [
+                {
+                  "route": [
+                    {
+                      "destination": {
+                        "host": "sampleapp",
+                        "subset": "prod"
+                      },
+                      "weight": 100
+                    },
+                    {
+                      "destination": {
+                        "host": "sampleapp",
+                        "subset": "green"
+                      },
+                      "weight": 0
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "moniker": {
+          "app": "sampleapp"
+        },
+        "name": "Send 100% to Production",
+        "refId": "22",
+        "relationships": {
+          "loadBalancers": [],
+          "securityGroups": []
+        },
+        "requisiteStageRefIds": [
+          "9"
+        ],
+        "skipExpressionEvaluation": false,
+        "source": "text",
+        "trafficManagement": {
+          "enabled": false,
+          "options": {
+            "enableTraffic": false,
+            "services": []
+          }
+        },
+        "type": "deployManifest"
+      },
+      {
+        "account": "gke-1-acct",
+        "app": "sampleapp",
+        "cloudProvider": "kubernetes",
+        "kinds": [
+          "deployment"
+        ],
+        "labelSelectors": {
+          "selectors": [
+            {
+              "key": "app",
+              "kind": "EQUALS",
+              "values": [
+                "sampleapp-green"
+              ]
+            }
+          ]
+        },
+        "location": "sampleapp",
+        "mode": "label",
+        "name": "Delete Green",
+        "options": {
+          "cascading": true
+        },
+        "refId": "12",
+        "requisiteStageRefIds": [
+          "22"
+        ],
+        "type": "deleteManifest"
       }
     ],
     "triggers": [],
