@@ -1,5 +1,5 @@
 {
-    "name": "Blue/Green Deploy Pipeline",
+    "name": "Blue Green Deploy Pipeline",
     "application": "sampleapp",
     "appConfig": {},
     "description": "This pipeline deploys a green version of the application then shifts traffic from current prod to this version. Based on manual judgement, it either triggers the production deployment pipeline or blue/green failed",
