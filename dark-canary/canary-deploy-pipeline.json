@@ -260,7 +260,7 @@
           "scopes": [
             {
               "controlLocation": "sampleapp",
-              "controlScope": "sampleapp-prod",
+              "controlScope": "sampleapp",
               "experimentLocation": "sampleapp",
               "experimentScope": "sampleapp-canary",
               "extendedScopeParams": {},
@@ -355,7 +355,7 @@
           "scopes": [
             {
               "controlLocation": "sampleapp",
-              "controlScope": "sampleapp-prod",
+              "controlScope": "sampleapp",
               "experimentLocation": "sampleapp",
               "experimentScope": "sampleapp-canary",
               "extendedScopeParams": {},
@@ -454,7 +454,7 @@
           "scopes": [
             {
               "controlLocation": "sampleapp",
-              "controlScope": "sampleapp-prod",
+              "controlScope": "sampleapp",
               "experimentLocation": "sampleapp",
               "experimentScope": "sampleapp-canary",
               "extendedScopeParams": {},
