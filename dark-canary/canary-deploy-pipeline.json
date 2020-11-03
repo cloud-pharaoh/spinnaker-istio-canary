@@ -308,15 +308,14 @@
                         "subset": "prod"
                       },
                       "weight": 100
-                    },
-                    {
-                      "mirror": {
-                        "host": "sampleapp",
-                        "subset": "canary"
-                      },
-                      "mirror_percent": 20
                     }
-                  ]
+                  ],
+                  "mirror":
+                  {
+                    "host": "sampleapp",
+                    "subset": "canary"
+                  },
+                  "mirror_percent": 10
                 }
               ]
             }
@@ -404,15 +403,14 @@
                         "subset": "prod"
                       },
                       "weight": 100
-                    },
-                    {
-                      "mirror": {
-                        "host": "sampleapp",
-                        "subset": "canary"
-                      },
-                      "mirror_percent": 20
                     }
-                  ]
+                  ],
+                  "mirror":
+                  {
+                    "host": "sampleapp",
+                    "subset": "canary"
+                  },
+                  "mirror_percent": 20
                 }
               ]
             }
@@ -503,16 +501,15 @@
                         "host": "sampleapp",
                         "subset": "prod"
                       },
-                      "weight": 20
-                    },
-                    {
-                      "destination": {
-                        "host": "sampleapp",
-                        "subset": "canary"
-                      },
-                      "weight": 40
+                      "weight": 100
                     }
-                  ]
+                  ],
+                  "mirror":
+                  {
+                    "host": "sampleapp",
+                    "subset": "canary"
+                  },
+                  "mirror_percent": 40
                 }
               ]
             }
