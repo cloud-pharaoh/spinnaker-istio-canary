@@ -157,10 +157,10 @@
         },
         "refId": "9",
         "requisiteStageRefIds": [
-          "34"
+          "26"
         ],
         "stageEnabled": {
-          "expression": "${ #stage('Canary Analysis at 40%')['status'].toString() == 'SUCCEEDED'}",
+          "expression": "${ #stage('Canary Analysis')['status'].toString() == 'SUCCEEDED'}",
           "type": "expression"
         },
         "type": "pipeline",
@@ -250,40 +250,6 @@
         "type": "deleteManifest"
       },
       {
-        "analysisType": "realTime",
-        "canaryConfig": {
-          "beginCanaryAnalysisAfterMins": "0",
-          "canaryAnalysisIntervalMins": "5",
-          "canaryConfigId": "85d778fd-318a-4429-8a0a-d64d40139e9e",
-          "lifetimeDuration": "PT0H5M",
-          "metricsAccountName": "kayenta-tutorial",
-          "scopes": [
-            {
-              "controlLocation": "sampleapp",
-              "controlScope": "sampleapp",
-              "experimentLocation": "sampleapp",
-              "experimentScope": "sampleapp-canary",
-              "extendedScopeParams": {},
-              "scopeName": "default"
-            }
-          ],
-          "scoreThresholds": {
-            "marginal": "75",
-            "pass": "95"
-          },
-          "storageAccountName": "my-google-account"
-        },
-        "completeOtherBranchesThenFail": false,
-        "continuePipeline": true,
-        "failPipeline": false,
-        "name": "Canary Analysis at 40%",
-        "refId": "16",
-        "requisiteStageRefIds": [
-          "21"
-        ],
-        "type": "kayentaCanary"
-      },
-      {
         "account": "gke-1-acct",
         "cloudProvider": "kubernetes",
         "manifestArtifactAccount": "docker-registry",
@@ -315,7 +281,7 @@
                     "host": "sampleapp",
                     "subset": "canary"
                   },
-                  "mirror_percent": 10
+                  "mirror_percent": 100
                 }
               ]
             }
@@ -324,7 +290,7 @@
         "moniker": {
           "app": "sampleapp"
         },
-        "name": "Mirror 10% to Canary",
+        "name": "Mirror 100% to Canary",
         "refId": "17",
         "relationships": {
           "loadBalancers": [],
@@ -371,7 +337,7 @@
         "completeOtherBranchesThenFail": false,
         "continuePipeline": true,
         "failPipeline": false,
-        "name": "Canary Analysis at 10%",
+        "name": "Canary Analysis",
         "refId": "18",
         "requisiteStageRefIds": [
           "17"
@@ -379,198 +345,14 @@
         "type": "kayentaCanary"
       },
       {
-        "account": "gke-1-acct",
-        "cloudProvider": "kubernetes",
-        "manifestArtifactAccount": "docker-registry",
-        "manifests": [
-          {
-            "apiVersion": "networking.istio.io/v1alpha3",
-            "kind": "VirtualService",
-            "metadata": {
-              "name": "sampleapp-virtual-service",
-              "namespace": "sampleapp"
-            },
-            "spec": {
-              "hosts": [
-                "sampleapp"
-              ],
-              "http": [
-                {
-                  "route": [
-                    {
-                      "destination": {
-                        "host": "sampleapp",
-                        "subset": "prod"
-                      },
-                      "weight": 100
-                    }
-                  ],
-                  "mirror":
-                  {
-                    "host": "sampleapp",
-                    "subset": "canary"
-                  },
-                  "mirror_percent": 20
-                }
-              ]
-            }
-          }
-        ],
-        "moniker": {
-          "app": "sampleapp"
-        },
-        "name": "Mirror 20% to Canary",
-        "refId": "19",
-        "relationships": {
-          "loadBalancers": [],
-          "securityGroups": []
-        },
-        "requisiteStageRefIds": [
-          "25"
-        ],
-        "skipExpressionEvaluation": false,
-        "source": "text",
-        "stageEnabled": {
-          "expression": "${ #stage('Canary Analysis at 10%')['status'].toString() == 'SUCCEEDED'}",
-          "type": "expression"
-        },
-        "trafficManagement": {
-          "enabled": false,
-          "options": {
-            "enableTraffic": false,
-            "services": []
-          }
-        },
-        "type": "deployManifest"
-      },
-      {
-        "analysisType": "realTime",
-        "canaryConfig": {
-          "beginCanaryAnalysisAfterMins": "0",
-          "canaryAnalysisIntervalMins": "5",
-          "canaryConfigId": "85d778fd-318a-4429-8a0a-d64d40139e9e",
-          "lifetimeDuration": "PT0H5M",
-          "metricsAccountName": "kayenta-tutorial",
-          "scopes": [
-            {
-              "controlLocation": "sampleapp",
-              "controlScope": "sampleapp",
-              "experimentLocation": "sampleapp",
-              "experimentScope": "sampleapp-canary",
-              "extendedScopeParams": {},
-              "scopeName": "default"
-            }
-          ],
-          "scoreThresholds": {
-            "marginal": "75",
-            "pass": "95"
-          },
-          "storageAccountName": "my-google-account"
-        },
-        "completeOtherBranchesThenFail": false,
-        "continuePipeline": true,
-        "failPipeline": false,
-        "name": "Canary Analysis at 20%",
-        "refId": "20",
-        "requisiteStageRefIds": [
-          "19"
-        ],
-        "type": "kayentaCanary"
-      },
-      {
-        "account": "gke-1-acct",
-        "cloudProvider": "kubernetes",
-        "manifestArtifactAccount": "docker-registry",
-        "manifests": [
-          {
-            "apiVersion": "networking.istio.io/v1alpha3",
-            "kind": "VirtualService",
-            "metadata": {
-              "name": "sampleapp-virtual-service",
-              "namespace": "sampleapp"
-            },
-            "spec": {
-              "hosts": [
-                "sampleapp"
-              ],
-              "http": [
-                {
-                  "route": [
-                    {
-                      "destination": {
-                        "host": "sampleapp",
-                        "subset": "prod"
-                      },
-                      "weight": 100
-                    }
-                  ],
-                  "mirror":
-                  {
-                    "host": "sampleapp",
-                    "subset": "canary"
-                  },
-                  "mirror_percent": 40
-                }
-              ]
-            }
-          }
-        ],
-        "moniker": {
-          "app": "sampleapp"
-        },
-        "name": "Mirror 40% to Canary",
-        "refId": "21",
-        "relationships": {
-          "loadBalancers": [],
-          "securityGroups": []
-        },
-        "requisiteStageRefIds": [
-          "30"
-        ],
-        "skipExpressionEvaluation": false,
-        "source": "text",
-        "stageEnabled": {
-          "expression": "${ #stage('Canary Analysis at 20%')['status'].toString() == 'SUCCEEDED'}",
-          "type": "expression"
-        },
-        "trafficManagement": {
-          "enabled": false,
-          "options": {
-            "enableTraffic": false,
-            "services": []
-          }
-        },
-        "type": "deployManifest"
-      },
-      {
         "completeOtherBranchesThenFail": false,
         "continuePipeline": false,
         "failPipeline": false,
-        "name": "If Canary at 10% passes",
+        "name": "If Canary passes",
         "preconditions": [
           {
             "context": {
-              "expression": "${ #stage('Canary Analysis at 10%')['status'].toString() == 'SUCCEEDED'}"
-            },
-            "failPipeline": false,
-            "type": "expression"
-          }
-        ],
-        "refId": "25",
-        "requisiteStageRefIds": [
-          "18"
-        ],
-        "type": "checkPreconditions"
-      },
-      {
-        "completeOtherBranchesThenFail": false,
-        "continuePipeline": false,
-        "failPipeline": false,
-        "name": "If Canary at 10% fails",
-        "preconditions": [
-          {
-            "context": {
-              "expression": "${ #stage('Canary Analysis at 10%')['status'].toString() != 'SUCCEEDED'}"
+              "expression": "${ #stage('Canary Analysis')['status'].toString() != 'SUCCEEDED'}"
             },
             "failPipeline": false,
             "type": "expression"
@@ -586,39 +368,19 @@
         "completeOtherBranchesThenFail": false,
         "continuePipeline": false,
         "failPipeline": false,
-        "name": "If Canary at 20% passes",
+        "name": "If Canary fails",
         "preconditions": [
           {
             "context": {
-              "expression": "${ #stage('Canary Analysis at 20%')['status'].toString() == 'SUCCEEDED'}"
+              "expression": "${ #stage('Canary Analysis')['status'].toString() != 'SUCCEEDED'}"
             },
             "failPipeline": false,
             "type": "expression"
           }
         ],
-        "refId": "30",
+        "refId": "26",
         "requisiteStageRefIds": [
-          "20"
-        ],
-        "type": "checkPreconditions"
-      },
-      {
-        "completeOtherBranchesThenFail": false,
-        "continuePipeline": false,
-        "failPipeline": false,
-        "name": "If Canary at 20% fails",
-        "preconditions": [
-          {
-            "context": {
-              "expression": "${ #stage('Canary Analysis at 20%')['status'].toString() != 'SUCCEEDED'}"
-            },
-            "failPipeline": false,
-            "type": "expression"
-          }
-        ],
-        "refId": "31",
-        "requisiteStageRefIds": [
-          "20"
+          "18"
         ],
         "type": "checkPreconditions"
       },
@@ -631,72 +393,6 @@
         "refId": "32",
         "requisiteStageRefIds": [
           "26"
-        ],
-        "type": "pipeline",
-        "waitForCompletion": true
-      },
-      {
-        "application": "sampleapp",
-        "failPipeline": true,
-        "name": "100% to old Prod",
-        "pipeline": "CANARY_FAILED_PIPELINE_ID",
-        "pipelineParameters": {},
-        "refId": "33",
-        "requisiteStageRefIds": [
-          "31"
-        ],
-        "type": "pipeline",
-        "waitForCompletion": true
-      },
-      {
-        "completeOtherBranchesThenFail": false,
-        "continuePipeline": false,
-        "failPipeline": false,
-        "name": "If Canary at 40% passes",
-        "preconditions": [
-          {
-            "context": {
-              "expression": "${ #stage('Canary Analysis at 40%')['status'].toString() == 'SUCCEEDED'}"
-            },
-            "failPipeline": false,
-            "type": "expression"
-          }
-        ],
-        "refId": "34",
-        "requisiteStageRefIds": [
-          "16"
-        ],
-        "type": "checkPreconditions"
-      },
-      {
-        "completeOtherBranchesThenFail": false,
-        "continuePipeline": false,
-        "failPipeline": false,
-        "name": "If Canary at 40% fails",
-        "preconditions": [
-          {
-            "context": {
-              "expression": "${ #stage('Canary Analysis at 40%')['status'].toString() != 'SUCCEEDED'}"
-            },
-            "failPipeline": false,
-            "type": "expression"
-          }
-        ],
-        "refId": "35",
-        "requisiteStageRefIds": [
-          "16"
-        ],
-        "type": "checkPreconditions"
-      },
-      {
-        "application": "sampleapp",
-        "failPipeline": true,
-        "name": "100% to old Prod",
-        "pipeline": "CANARY_FAILED_PIPELINE_ID",
-        "pipelineParameters": {},
-        "refId": "36",
-        "requisiteStageRefIds": [
-          "35"
         ],
         "type": "pipeline",
         "waitForCompletion": true
