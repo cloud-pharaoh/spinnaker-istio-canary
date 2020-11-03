@@ -157,7 +157,7 @@
         },
         "refId": "9",
         "requisiteStageRefIds": [
-          "26"
+          "25"
         ],
         "stageEnabled": {
           "expression": "${ #stage('Canary Analysis')['status'].toString() == 'SUCCEEDED'}",
@@ -352,13 +352,13 @@
         "preconditions": [
           {
             "context": {
-              "expression": "${ #stage('Canary Analysis')['status'].toString() != 'SUCCEEDED'}"
+              "expression": "${ #stage('Canary Analysis')['status'].toString() == 'SUCCEEDED'}"
             },
             "failPipeline": false,
             "type": "expression"
           }
         ],
-        "refId": "26",
+        "refId": "25",
         "requisiteStageRefIds": [
           "18"
         ],
