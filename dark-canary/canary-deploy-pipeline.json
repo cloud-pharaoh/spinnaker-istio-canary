@@ -546,68 +546,6 @@
         "type": "deployManifest"
       },
       {
-        "account": "gke-1-acct",
-        "cloudProvider": "kubernetes",
-        "manifestArtifactAccount": "docker-registry",
-        "manifests": [
-          {
-            "apiVersion": "networking.istio.io/v1alpha3",
-            "kind": "VirtualService",
-            "metadata": {
-              "name": "sampleapp-virtual-service",
-              "namespace": "sampleapp"
-            },
-            "spec": {
-              "hosts": [
-                "sampleapp"
-              ],
-              "http": [
-                {
-                  "route": [
-                    {
-                      "destination": {
-                        "host": "sampleapp",
-                        "subset": "prod"
-                      },
-                      "weight": 100
-                    },
-                    {
-                      "mirror": {
-                        "host": "sampleapp",
-                        "subset": "canary"
-                      },
-                      "mirror_percent": 60
-                    }
-                  ]
-                }
-              ]
-            }
-          }
-        ],
-        "moniker": {
-          "app": "sampleapp"
-        },
-        "name": "Mirror 60% to Canary",
-        "refId": "22",
-        "relationships": {
-          "loadBalancers": [],
-          "securityGroups": []
-        },
-        "requisiteStageRefIds": [
-          "9"
-        ],
-        "skipExpressionEvaluation": false,
-        "source": "text",
-        "trafficManagement": {
-          "enabled": false,
-          "options": {
-            "enableTraffic": false,
-            "services": []
-          }
-        },
-        "type": "deployManifest"
-      },
-      {
         "completeOtherBranchesThenFail": false,
         "continuePipeline": false,
         "failPipeline": false,
@@ -859,7 +797,7 @@
         "notifications": [],
         "refId": "38",
         "requisiteStageRefIds": [
-          "22"
+          "9"
         ],
         "type": "manualJudgment"
       }
