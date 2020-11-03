@@ -31,20 +31,6 @@
                         "subset": "prod"
                       },
                       "weight": 100
-                    },
-                    {
-                      "destination": {
-                        "host": "sampleapp",
-                        "subset": "baseline"
-                      },
-                      "weight": 0
-                    },
-                    {
-                      "destination": {
-                        "host": "sampleapp",
-                        "subset": "canary"
-                      },
-                      "weight": 0
                     }
                   ]
                 }
@@ -72,36 +58,6 @@
           }
         },
         "type": "deployManifest"
-      },
-      {
-        "account": "gke-1-acct",
-        "app": "sampleapp",
-        "cloudProvider": "kubernetes",
-        "kinds": [
-          "deployment"
-        ],
-        "labelSelectors": {
-          "selectors": [
-            {
-              "key": "app",
-              "kind": "EQUALS",
-              "values": [
-                "sampleapp-baseline"
-              ]
-            }
-          ]
-        },
-        "location": "sampleapp",
-        "mode": "label",
-        "name": "Delete Baseline",
-        "options": {
-          "cascading": true
-        },
-        "refId": "2",
-        "requisiteStageRefIds": [
-          "1"
-        ],
-        "type": "deleteManifest"
       },
       {
         "account": "gke-1-acct",
